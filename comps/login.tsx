@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'Outfit-Bold',
-    fontSize: 39,
+    fontSize: 43,
     color: '#fff',
     marginBottom: 20,
   },
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 19,
     fontFamily:'Outfit-Regular',
   },
 });
