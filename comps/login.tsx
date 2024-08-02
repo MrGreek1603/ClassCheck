@@ -11,7 +11,7 @@ const Login: React.FC = () => {
         <Text style={styles.title}>
           ClassCheck
         </Text>
-        <TouchableOpacity style={styles.button} onPress={() => router.push('auth/sign-in')}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/auth/sign-in')}>
           <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
       </View>
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'Outfit-Bold',
-    fontSize: 43,
+    fontSize: 45,
     color: '#fff',
     marginBottom: 20,
   },
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 19,
+    fontSize: 21,
     fontFamily:'Outfit-Regular',
   },
 });

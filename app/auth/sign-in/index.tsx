@@ -71,9 +71,9 @@ const SignIn: React.FC<SignInProps> = () => {
             <TouchableOpacity style={styles.button} onPress={onSignIn}>
                 <Text style={styles.buttonText}>LOGIN</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button1} onPress={() => router.replace('auth/sign-up')}>
+            {/* <TouchableOpacity style={styles.button1} onPress={() => router.replace('auth/sign-up')}>
                 <Text style={styles.buttonText1}>Create Account</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     );
 };

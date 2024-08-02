@@ -14,7 +14,7 @@ const Login: React.FC = () => {
       if (user) {
         setUserName(user.displayName || ''); // Adjust according to how you store the user's name
       } else {
-        router.push('auth/sign-in'); // Redirect to sign-in if no user is logged in
+        router.push('/auth/sign-in'); // Redirect to sign-in if no user is logged in
       }
     });
 
@@ -47,7 +47,7 @@ const Login: React.FC = () => {
                     styles.button,
                     pressedButtonIndex === buttonIndex && styles.buttonPressed
                   ]}
-                  onPress={() => router.push('cam/att')}
+                  onPress={() => router.push('/cam/att')}
                   onPressIn={() => handlePressIn(buttonIndex)}
                   onPressOut={handlePressOut}
                 >
