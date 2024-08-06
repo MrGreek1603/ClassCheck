@@ -1,22 +1,20 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBZEUiPAPpfXoqvX1j4UwC02VfLvWPSFLA",
-  authDomain: "aora-72bf3.firebaseapp.com",
-  projectId: "aora-72bf3",
-  storageBucket: "aora-72bf3.appspot.com",
-  messagingSenderId: "714987554369",
-  appId: "1:714987554369:web:575994cc391643eff728c0",
-  measurementId: "G-VHCZM4C9GW"
+    apiKey: "AIzaSyBE8CvDmEuJGBx-T4SFQaim1wV-EaqMZRU",
+    authDomain: "attendance-cf17e.firebaseapp.com",
+    projectId: "attendance-cf17e",
+    databaseURL: "https://attendance-cf17e-default-rtdb.firebaseio.com",
+    storageBucket: "attendance-cf17e.appspot.com",
+    messagingSenderId: "239071590312",
+    appId: "1:239071590312:web:4168cb20adda9b430e0f9d",
+    measurementId: "G-RSDGTFDJRF"
 };
 
-// Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app); // Initialize Firestore
+
+export { auth, db }; // Ensure db is exported
