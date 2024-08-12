@@ -6,7 +6,6 @@ const firebaseConfig = {
     apiKey: "AIzaSyBE8CvDmEuJGBx-T4SFQaim1wV-EaqMZRU",
     authDomain: "attendance-cf17e.firebaseapp.com",
     projectId: "attendance-cf17e",
-    databaseURL: "https://attendance-cf17e-default-rtdb.firebaseio.com",
     storageBucket: "attendance-cf17e.appspot.com",
     messagingSenderId: "239071590312",
     appId: "1:239071590312:web:4168cb20adda9b430e0f9d",
@@ -15,6 +14,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app); // Initialize Firestore
+const db = getFirestore(app);
 
-export { auth, db }; // Ensure db is exported
+export { auth, db };

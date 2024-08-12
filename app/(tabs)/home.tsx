@@ -40,7 +40,12 @@ const Login: React.FC = () => {
             const subjectsList = querySnapshot2.docs.map(doc => {
               const data = doc.data();
               console.log("Fetched subject: ", data);
-              return data;
+              return {
+                className: data.className, // Ensure your Firestore documents have a className field
+                subjectName: data.subjectName, // Ensure your Firestore documents have a subjectName field
+                institute_id: data.institute_id,
+                facultyID: data.facultyID,
+              };
             });
             setSubjects(subjectsList);
           } else {
@@ -93,10 +98,10 @@ const Login: React.FC = () => {
               onPressIn={() => handlePressIn(index)}
               onPressOut={handlePressOut}
             >
-              <Text style={styles.buttonText}>{subject.classID}</Text>
-              <Text style={styles.buttonText}>{subject.facultyID}</Text>
+              <Text style={styles.buttonText}>{subject.className}</Text>
+              <Text style={styles.buttonText}>{subject.subjectName}</Text>
               <Text style={styles.buttonText}>{subject.institute_id}</Text>
-              <Text style={styles.buttonText}>{subject.subjectID}</Text>
+              <Text style={styles.buttonText}>{subject.facultyID}</Text>
             </TouchableOpacity>
           ))
         ) : (
