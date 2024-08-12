@@ -2,9 +2,12 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, Alert, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import Button from './../../../comp/Button'; // Ensure Button component is correctly implemented
-import { useRouter } from 'expo-router'; // Import useRouter for navigation
-import Constants from 'expo-constants'; // Import Constants from expo-constants
+import Button from './../../../comp/Button';
+import { useRouter } from 'expo-router';
+import Constants from 'expo-constants';
+import { signInWithEmailAndPassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
+import { auth } from './../../../configs/FirebaseConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface CameraProps {
   facing: 'front' | 'back';
@@ -12,8 +15,6 @@ interface CameraProps {
   animateShutter: boolean;
   enableTorch: boolean;
 }
-
-const FACULTY_PASSWORD = 'your_predefined_password'; // Replace with actual password logic
 
 export default function App() {
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -26,6 +27,8 @@ export default function App() {
   const [image, setImage] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [password, setPassword] = useState('');
+  const [apiUsername, setApiUsername] = useState<string | null>(null);
+  const [apiSubject, setApiSubject] = useState<string | null>(null);
   const cameraRef = useRef<any>(null);
   const router = useRouter();
 
@@ -39,12 +42,10 @@ export default function App() {
   }, [cameraPermission, requestCameraPermission]);
 
   if (!cameraPermission) {
-    // Permissions are still loading.
     return <View />;
   }
 
   if (!cameraPermission.granted) {
-    // Permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text>We need camera permissions to continue.</Text>
@@ -76,7 +77,7 @@ export default function App() {
       } as unknown as Blob); // Correct casting for FormData
 
       try {
-        const response = await fetch('http://192.168.21.120:5000/login', {
+        const response = await fetch('http://172.20.10.2:5000/login', {
           method: 'POST',
           body: formData,
           headers: {
@@ -85,7 +86,24 @@ export default function App() {
         });
 
         const result = await response.json();
-        Alert.alert('API Response', result.message || 'Image uploaded successfully!');
+
+        if (result.username && result.subject) {
+          setApiUsername(result.username);
+          setApiSubject(result.subject);
+
+          Alert.alert(
+            'API Response',
+            result.message || 'Image uploaded successfully!',
+            [
+              {
+                text: 'Log In',
+                onPress: () => handleSuccessfulLogin(result.username),
+              },
+            ]
+          );
+        } else {
+          Alert.alert('API Response', result.message || 'Image uploaded successfully!');
+        }
         setImage(null); // Clear the image after upload
       } catch (error) {
         Alert.alert('Error', (error as Error).message || 'Failed to upload image.');
@@ -95,19 +113,38 @@ export default function App() {
     }
   };
 
+  const handleSuccessfulLogin = async (username: string) => {
+    try {
+      await AsyncStorage.setItem('loggedInUser', username); // Save the username in AsyncStorage
+      await AsyncStorage.setItem('apiSubject', apiSubject || ''); // Save the subject in AsyncStorage
+      Alert.alert('Login Successful', `Welcome, ${username}`);
+      router.push('/final/final'); // Redirect to the next page
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save logged-in user data.');
+    }
+  };
+
   const handleSavePress = () => {
     setIsModalVisible(true);
   };
 
-  const handlePasswordSubmit = () => {
-    if (password === FACULTY_PASSWORD) {
-      setIsModalVisible(false);
-      router.push('/final/final'); // Redirect to students list page
-    } else {
-      Alert.alert('Incorrect Password', 'The password you entered is incorrect.');
+  const handlePasswordSubmit = async () => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const credential = EmailAuthProvider.credential(user.email!, password);
+        
+        await reauthenticateWithCredential(user, credential);
+        setIsModalVisible(false);
+        router.push('/final/final'); // Redirect to the final page
+      } else {
+        Alert.alert('Error', 'No user is currently signed in.');
+      }
+    } catch (error) {
+      Alert.alert('Reauthentication Failed', error.message || 'An error occurred during reauthentication.');
     }
   };
-
+  
   return (
     <View style={styles.container}>
       {!image ? (
@@ -232,42 +269,43 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: 'blue',
     padding: 10,
-    margin: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  camera: {
-    flex: 1,
-    width: '100%',
-  },
-  bottomControlsContainer: {
-    height: 100,
-    backgroundColor: 'black',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    width: '80%',
-    padding: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  passwordInput: {
-    width: '100%',
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginVertical: 10,
-  },
+    margin:
+10,
+borderRadius: 5,
+},
+buttonText: {
+color: 'white',
+fontSize: 16,
+},
+camera: {
+flex: 1,
+width: '100%',
+},
+bottomControlsContainer: {
+height: 100,
+backgroundColor: 'black',
+flexDirection: 'row',
+justifyContent: 'space-around',
+alignItems: 'center',
+},
+modalContainer: {
+flex: 1,
+justifyContent: 'center',
+alignItems: 'center',
+backgroundColor: 'rgba(0,0,0,0.5)',
+},
+modalContent: {
+width: '80%',
+padding: 20,
+backgroundColor: 'white',
+borderRadius: 10,
+alignItems: 'center',
+},
+passwordInput: {
+width: '100%',
+padding: 10,
+borderWidth: 1,
+borderColor: '#ccc',
+marginVertical: 10,
+},
 });
