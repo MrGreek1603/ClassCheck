@@ -77,7 +77,7 @@ export default function App() {
       } as unknown as Blob); // Correct casting for FormData
 
       try {
-        const response = await fetch('http://192.168.23.120:5000/login', {
+        const response = await fetch('http://172.20.10.2:5000/login', {
           method: 'POST',
           body: formData,
           headers: {
